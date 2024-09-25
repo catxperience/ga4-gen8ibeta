@@ -4,14 +4,9 @@ import plotly.graph_objects as go
 import plotly.express as px
 import csv
 import openai
-import os
 
-# Securely fetching the API key from environment variables
-openai_api_key = os.getenv("OPENAI_API_KEY")
-if not openai_api_key:
-    st.error("OpenAI API key is not set. Please set it in your environment variables.")
-else:
-    openai.api_key = openai_api_key
+# Load API key from Streamlit's secrets
+openai.api_key = st.secrets["openai_api_key"]
 
 st.title("GA4 Analytics")
 
@@ -31,6 +26,9 @@ def call_openai(content):
     except Exception as e:
         st.error(f"Failed to call OpenAI API: {str(e)}")
         return "Error in generating response."
+
+# Continue your implementation for each tab
+
 
 # The code for each tab follows similarly. Here's an example of one of the tabs:
 with tab2:
