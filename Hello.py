@@ -5,8 +5,11 @@ import plotly.express as px
 import csv
 import openai
 
-# Load API key from Streamlit's secrets
-openai.api_key = st.secrets["openai_api_key"]
+# Ensure that Streamlit's secrets are being loaded correctly
+if "openai_api_key" not in st.secrets:
+    st.error("OpenAI API key is missing from Streamlit secrets. Please add it.")
+else:
+    openai.api_key = st.secrets["openai_api_key"]
 
 st.title("GA4 Analytics")
 
