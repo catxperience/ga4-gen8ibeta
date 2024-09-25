@@ -4,33 +4,41 @@ import plotly.graph_objects as go
 import plotly.express as px
 import csv
 import openai
-openai.api_key = "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"
-#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
+import os
+
+# Securely fetching the API key from environment variables
+openai_api_key = os.getenv("OPENAI_API_KEY")
+if not openai_api_key:
+    st.error("OpenAI API key is not set. Please set it in your environment variables.")
+else:
+    openai.api_key = openai_api_key
 
 st.title("GA4 Analytics")
 
 tab2, tab3, tab4 = st.tabs(["Purchase Funnel", "Traffic", "SKU"])
 
 def call_openai(content):
-    return openai.ChatCompletion.create(
+    try:
+        response = openai.ChatCompletion.create(
             model="gpt-4-1106-preview",
             messages=[
                 {"role": "system", "content": "You are a seasoned marketer, that provides insights given data from Google Analytics"},
                 {"role": "user", "content": content}
             ],
             temperature=0.7
-        )["choices"][0]["message"]["content"]
+        )
+        return response["choices"][0]["message"]["content"]
+    except Exception as e:
+        st.error(f"Failed to call OpenAI API: {str(e)}")
+        return "Error in generating response."
 
-
-
+# The code for each tab follows similarly. Here's an example of one of the tabs:
 with tab2:
     st.header("Purchase Funnel")
-
+    # Example of handling a file upload
     purchase_funnel_file = st.file_uploader("Upload your purchase funnel CSV file")
     purchase_funnel_file_raw = st.file_uploader("Or your raw Looker purchase funnel CSV file here")
-
-    st.divider()
-
+    
     if purchase_funnel_file_raw:
         df_2 = pd.read_csv(purchase_funnel_file_raw, parse_dates=['Date'], dtype={'Event count': float})
         df_2['Date'] = pd.to_datetime(df_2['Date']).dt.date
